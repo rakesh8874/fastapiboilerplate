@@ -29,9 +29,9 @@ class Post(Base, TimestampMixin):
     title = Column(String(255), nullable=False)
     content = Column(String(255), nullable=False)
     published = Column(Boolean, default=True)
-    owner_id = Column(BigInteger, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    owner_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
-    owner = relationship("User", back_populates="posts", uselist=False, lazy="raise")
+    owner = relationship("User", uselist=False, lazy="raise")
 
     __mapper_args__ = {"eager_defaults": True}
 
@@ -46,6 +46,6 @@ class Post(Base, TimestampMixin):
 
         return [
             (Allow, Authenticated, basic_permissions),
-            (Allow, UserPrincipal(self.task_author_id), self_permissions),
+            (Allow, UserPrincipal(self.owner_id), self_permissions),
             (Allow, RolePrincipal("admin"), all_permissions),
         ]

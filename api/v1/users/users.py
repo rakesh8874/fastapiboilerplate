@@ -34,7 +34,6 @@ async def register_user(
     return await auth_controller.register(
         email=register_user_request.email,
         password=register_user_request.password,
-        username=register_user_request.username,
     )
 
 

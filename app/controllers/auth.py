@@ -15,18 +15,12 @@ class AuthController(BaseController[User]):
         self.user_repository = user_repository
 
     @Transactional(propagation=Propagation.REQUIRED)
-    async def register(self, email: EmailStr, password: str, username: str) -> User:
+    async def register(self, email: EmailStr, password: str) -> User:
         # Check if user exists with email
         user = await self.user_repository.get_by_email(email)
 
         if user:
             raise BadRequestException("User already exists with this email")
-
-        # Check if user exists with username
-        user = await self.user_repository.get_by_username(username)
-
-        if user:
-            raise BadRequestException("User already exists with this username")
 
         password = PasswordHandler.hash(password)
 
@@ -34,7 +28,6 @@ class AuthController(BaseController[User]):
             {
                 "email": email,
                 "password": password,
-                "username": username,
             }
         )
 
@@ -48,7 +41,7 @@ class AuthController(BaseController[User]):
             raise BadRequestException("Invalid credentials")
 
         return Token(
-            access_token=JWTHandler.encode(payload={"user_id": user.id}),
+            access_token=JWTHandler.encode(payload={"user_id": str(user.id)}),
             refresh_token=JWTHandler.encode(payload={"sub": "refresh_token"}),
         )
 

@@ -1,4 +1,3 @@
-import uuid
 from typing import Callable
 
 from fastapi import APIRouter, Depends, Request
@@ -33,19 +32,19 @@ async def create_post(
 ) -> PostResponse:
     post = await post_controller.add(
         title=post_create.title,
-        description=post_create.description,
-        author_id=request.user.id,
+        content=post_create.content,
+        owner_id=request.user.id,
     )
     return post
 
 
 @post_router.get("/{id}", response_model=PostResponse)
 async def get_post(
-    post_uuid: str,
+    id: str,
     post_controller: PostController = Depends(Factory().get_post_controller),
     assert_access: Callable = Depends(Permissions(PostPermission.READ)),
 ) -> PostResponse:
-    post = await post_controller.get_by_id(post_uuid)
+    post = await post_controller.get_by_id(id)
 
     assert_access(post)
     return post
