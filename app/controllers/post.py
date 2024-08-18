@@ -6,7 +6,6 @@ from core.database.transactional import Propagation, Transactional
 
 
 class PostController(BaseController[Post]):
-    """Task controller."""
 
     def __init__(self, post_repository: PostRepository):
         super().__init__(model=Post, repository=post_repository)

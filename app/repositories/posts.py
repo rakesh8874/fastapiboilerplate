@@ -8,10 +8,7 @@ from core.repository import BaseRepository
 
 
 class PostRepository(BaseRepository[Post]):
-    """
-    Task repository provides all the database operations for the Task model.
-    """
-
+    
     async def get_by_owner_id(
         self, owner_id: uuid, join_: set[str] | None = None
     ) -> list[Post]:
